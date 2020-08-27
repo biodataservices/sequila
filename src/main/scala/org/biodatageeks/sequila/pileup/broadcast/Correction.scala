@@ -7,6 +7,7 @@ import org.biodatageeks.sequila.pileup.model.QualityCache
 import org.biodatageeks.sequila.utils.FastMath
 import org.biodatageeks.sequila.pileup.model.Quals._
 
+import scala.collection.immutable.TreeSet
 import scala.collection.mutable
 
 
@@ -16,7 +17,9 @@ case class Correction(
                        quals: Option[MultiLociQuals],
                        cumulativeSum: Short,
                        qualityCache:QualityCache
-                     )
+                     ) {
+  val altsKeyCache: Option[TreeSet[Int]] = if(alts.isDefined) Option(TreeSet[Int]() ++ alts.get.keySet) else None
+}
 
 
 object Correction {
