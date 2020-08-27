@@ -39,6 +39,17 @@ object Correction {
       }
     }
 
+    def getKeyCache(contig:String, pos:Int): TreeSet[Int] ={
+      map.get((contig, pos)) match {
+        case Some(correction) =>
+          correction.altsKeyCache match {
+            case Some(keyCache) => keyCache
+            case None => new TreeSet[Int]()
+          }
+        case None => new TreeSet[Int]()
+      }
+    }
+
     def getQuals(contig:String, pos:Int): MultiLociQuals ={
       map.get((contig, pos)) match {
         case Some(correction) =>

@@ -195,7 +195,7 @@ case class ContigAggregate(
       case None => quals
     }
 
-    val concordantAlts = quals.keySet.intersect(upd.getAlts(contig,startPosition).keySet) //FIXME
+    val concordantAlts = altsKeyCache.intersect(upd.getKeyCache(contig,startPosition))
 
     val qualsInterim = FillQualityForHigherAltsTimer.time{ fillQualityForHigherAlts(upd, adjustedQuals, concordantAlts)}
     val completeQuals = FillQualityForLowerAltsTimer.time {fillQualityForLowerAlts(upd, qualsInterim, concordantAlts)}
