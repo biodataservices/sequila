@@ -170,7 +170,7 @@ case class ContigAggregate(
             // fill BQ for alts in old Partition with cache from aggregate cache
             val qualsSet = correction.altsKeyCache.get.diff(blacklist)
             for (pos <- qualsSet) {
-              val reads = qualityCache.getReadsOverlappingPositionFullCache(pos) //FIXME
+              val reads = qualityCache.getReadsOverlappingPositionInHeader(pos) //FIXME
               for (read <- reads) {
                 val qual = read.qualsArray(read.relativePosition(pos))
                 qualsInterim.updateQuals(pos.toInt, QualityConstants.REF_SYMBOL, qual, firstUpdate = false, updateMax = false)
