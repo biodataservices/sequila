@@ -31,7 +31,7 @@ case class ContigAggregate(
                             qualityCache: QualityCache
                                 ) {
 
-  val altsKeyCache  = mutable.TreeSet.empty[Int]
+  val altsKeyCache  = mutable.TreeSet.empty[Int] ++ alts.keySet
 
   def hasAltOnPosition(pos:Int):Boolean = alts.contains(pos)
   def getRange: broadcast.Range = broadcast.Range(contig, startPosition, maxPosition)
@@ -142,7 +142,7 @@ case class ContigAggregate(
           case Some(overlapArray) => {// fill BQ for alts in new Partition with cache from correction broadcast
             val qualStart = startPosition
             val qualEnd = startPosition+ overlapArray.length
-            val qualsSet = alts.keySet.filter(pos=> pos >= qualStart && pos < qualEnd).diff(blacklist)
+            val qualsSet = altsKeyCache.filter(pos=> pos >= qualStart && pos < qualEnd).diff(blacklist)
 
             for (pos <- qualsSet) {
               val reads = correction.qualityCache.getReadsOverlappingPosition(pos)
@@ -170,7 +170,7 @@ case class ContigAggregate(
             // fill BQ for alts in old Partition with cache from aggregate cache
             val qualsSet = correction.altsKeyCache.get.diff(blacklist)
             for (pos <- qualsSet) {
-              val reads = qualityCache.getReadsOverlappingPositionFullCache(pos)
+              val reads = qualityCache.getReadsOverlappingPositionFullCache(pos) //FIXME
               for (read <- reads) {
                 val qual = read.qualsArray(read.relativePosition(pos))
                 qualsInterim.updateQuals(pos.toInt, QualityConstants.REF_SYMBOL, qual, firstUpdate = false, updateMax = false)
@@ -195,7 +195,7 @@ case class ContigAggregate(
       case None => quals
     }
 
-    val concordantAlts = quals.keySet.intersect(upd.getAlts(contig,startPosition).keySet)
+    val concordantAlts = quals.keySet.intersect(upd.getAlts(contig,startPosition).keySet) //FIXME
 
     val qualsInterim = FillQualityForHigherAltsTimer.time{ fillQualityForHigherAlts(upd, adjustedQuals, concordantAlts)}
     val completeQuals = FillQualityForLowerAltsTimer.time {fillQualityForLowerAlts(upd, qualsInterim, concordantAlts)}
