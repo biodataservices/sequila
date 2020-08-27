@@ -147,7 +147,7 @@ case class ContigAggregate(
             for (pos <- qualsSet) {
               val reads = correction.qualityCache.getReadsOverlappingPosition(pos)
               for (read <- reads) {
-                val qual = read.getBaseQualityForPosition(pos.toInt)
+                val qual = read.qualsArray(read.relativePosition(pos))
                 adjustedQuals.updateQuals(pos.toInt, QualityConstants.REF_SYMBOL, qual, firstUpdate = false, updateMax = false)
               }
             }
@@ -172,7 +172,7 @@ case class ContigAggregate(
             for (pos <- qualsSet) {
               val reads = qualityCache.getReadsOverlappingPositionFullCache(pos)
               for (read <- reads) {
-                val qual = read.getBaseQualityForPosition(pos.toInt)
+                val qual = read.qualsArray(read.relativePosition(pos))
                 qualsInterim.updateQuals(pos.toInt, QualityConstants.REF_SYMBOL, qual, firstUpdate = false, updateMax = false)
               }
             }
