@@ -62,7 +62,7 @@ object Quals {
   }
 
     implicit class MultiLociQualsExtension(val map: Quals.MultiLociQuals) {
-      def ++(that: Quals.MultiLociQuals): Quals.MultiLociQuals = (map ++ that).asInstanceOf[Quals.MultiLociQuals]
+      def ++(that: Quals.MultiLociQuals): Quals.MultiLociQuals = (map ++ that)
 
       def trim: MultiLociQuals = map.map({ case (k, v) => k -> v.trim })
 

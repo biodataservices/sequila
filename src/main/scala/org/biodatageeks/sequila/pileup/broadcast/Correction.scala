@@ -18,7 +18,6 @@ case class Correction(
                        cumulativeSum: Short,
                        qualityCache:QualityCache
                      ) {
-  val altsKeyCache: Option[TreeSet[Int]] = if(alts.isDefined) Option(TreeSet[Int]() ++ alts.get.keySet) else None
 }
 
 
@@ -36,17 +35,6 @@ object Correction {
             case None => new MultiLociAlts()
           }
         case None => new MultiLociAlts()
-      }
-    }
-
-    def getKeyCache(contig:String, pos:Int): TreeSet[Int] ={
-      map.get((contig, pos)) match {
-        case Some(correction) =>
-          correction.altsKeyCache match {
-            case Some(keyCache) => keyCache
-            case None => new TreeSet[Int]()
-          }
-        case None => new TreeSet[Int]()
       }
     }
 
@@ -69,8 +57,8 @@ object Correction {
       map.get((range.contig, range.minPos))  match {
         case Some(correction) => {
           val newArrEvents = correction.events.get.zipAll(arrEvents, 0.toShort, 0.toShort).map { case (x, y) => (x + y).toShort }
-          val newAlts = (correction.alts.get ++ overlap.alts).asInstanceOf[MultiLociAlts]
-          val newQuals = (correction.quals.get ++ overlap.quals).asInstanceOf[MultiLociQuals]
+          val newAlts = (correction.alts.get ++ overlap.alts)
+          val newQuals = (correction.quals.get ++ overlap.quals)
           val newCumSum = (correction.cumulativeSum - FastMath.sumShort(overlap.events.takeRight(overlapLen)) ).toShort
           val newCache = correction.qualityCache ++ overlap.cache
 

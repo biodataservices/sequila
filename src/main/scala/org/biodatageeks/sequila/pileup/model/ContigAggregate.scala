@@ -168,7 +168,7 @@ case class ContigAggregate(
         correction.alts match {
           case Some(alts) => {
             // fill BQ for alts in old Partition with cache from aggregate cache
-            val qualsSet = correction.altsKeyCache.get.diff(blacklist)
+            val qualsSet = alts.keySet.diff(blacklist)
             for (pos <- qualsSet) {
               val reads = qualityCache.getReadsOverlappingPositionInHeader(pos) //FIXME
               for (read <- reads) {
@@ -195,7 +195,7 @@ case class ContigAggregate(
       case None => quals
     }
 
-    val concordantAlts = quals.keySet.intersect(upd.getKeyCache(contig,startPosition))
+    val concordantAlts = quals.keySet.intersect(upd.getAlts(contig,startPosition).keySet)
 
     val qualsInterim = FillQualityForHigherAltsTimer.time{ fillQualityForHigherAlts(upd, adjustedQuals, concordantAlts)}
     val completeQuals = FillQualityForLowerAltsTimer.time {fillQualityForLowerAlts(upd, qualsInterim, concordantAlts)}
